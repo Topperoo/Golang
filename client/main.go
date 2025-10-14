@@ -94,7 +94,6 @@ func decodeString(encodedString string) (string, error) {
 }
 
 func hardOp() (bool, int, error) {
-	// Создаем context с таймаутом 15 секунд
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
@@ -106,7 +105,6 @@ func hardOp() (bool, int, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		// Проверяем, был ли это таймаут
 		if ctx.Err() == context.DeadlineExceeded {
 			return false, 0, fmt.Errorf("timeout exceeded")
 		}
@@ -114,10 +112,8 @@ func hardOp() (bool, int, error) {
 	}
 	defer resp.Body.Close()
 
-	// Читаем тело ответа (необязательно, но хорошая практика)
 	io.Copy(io.Discard, resp.Body)
 
-	// Успешный запрос - если получили ответ (даже с кодом 5xx)
 	success := resp.StatusCode < 500
 	return success, resp.StatusCode, nil
 }
